@@ -28,6 +28,9 @@ function Card({ data, reference, onClose, onDownload }) {
       <p className="text-center text-sm leading-tight mt-2 font-semibold sm:text-xs sm:mt-1">
         {data.desc}
       </p>
+      <p className="text-center text-xs mt-1 sm:text-[0.7rem] text-gray-400">
+        Uploaded on: {data.timestamp}
+      </p>
 
       <div className="footer absolute bottom-0 w-full left-0">
         <div
@@ -68,6 +71,7 @@ Card.propTypes = {
     filename: PropTypes.string.isRequired,
     desc: PropTypes.string.isRequired,
     filesize: PropTypes.string.isRequired,
+    timestamp: PropTypes.string.isRequired, // Added timestamp to PropTypes
     close: PropTypes.bool.isRequired,
     tag: PropTypes.shape({
       isOpen: PropTypes.bool.isRequired,

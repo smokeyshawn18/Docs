@@ -5,33 +5,34 @@ function Foreground() {
   const ref = useRef(null);
 
   const defaultCard = {
-    filename: "default-file.txt",
-    filesize: "0mb",
+    filename: "profile-pic.png",
+    filesize: "N/A",
     timestamp: "N/A",
-    desc: "This is a default card",
-    close: false, // Set to false if you don't want the default card to be closed
+    desc: "This is a default card with a profile picture.",
+    close: true, // Allow the default card to be closed
     tag: {
       isOpen: true,
-      tagTitle: "Default File",
+      tagTitle: "Profile Picture",
       tagColor: "gray",
     },
+    imagePath: "C:\\Users\\shuda\\Downloads\\profile-pic.png", // Path to the image
   };
 
-  const [files, setFiles] = useState([defaultCard]);
+  const [file, setFile] = useState(defaultCard);
 
   useEffect(() => {
-    const savedFiles = JSON.parse(localStorage.getItem("files")) || [];
-    if (savedFiles.length > 0) {
-      setFiles(savedFiles);
+    const savedFile = JSON.parse(localStorage.getItem("file"));
+    if (savedFile) {
+      setFile(savedFile);
     }
   }, []);
 
   const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    const uploadedFile = e.target.files[0];
+    if (uploadedFile) {
       const newFile = {
-        filename: file.name,
-        filesize: `${(file.size / 1024 / 1024).toFixed(2)}mb`,
+        filename: uploadedFile.name,
+        filesize: `${(uploadedFile.size / 1024 / 1024).toFixed(2)}mb`,
         timestamp: new Date().toLocaleString(),
         desc: "Uploaded file",
         close: true,
@@ -40,44 +41,35 @@ function Foreground() {
           tagTitle: "Successfully Uploaded",
           tagColor: "blue",
         },
+        imagePath: URL.createObjectURL(uploadedFile), // Create an object URL for the uploaded file
       };
 
-      const savedFiles = JSON.parse(localStorage.getItem("files")) || [];
-      savedFiles.push(newFile);
-      localStorage.setItem("files", JSON.stringify(savedFiles));
-
-      setFiles((prevFiles) => [...prevFiles, newFile]);
+      localStorage.setItem("file", JSON.stringify(newFile));
+      setFile(newFile); // Replace the existing file with the new one
     }
   };
 
-  const handleClose = (index) => {
-    const updatedFiles = files.filter((_, i) => i !== index);
-    if (updatedFiles.length === 0) {
-      updatedFiles.push(defaultCard); // Add the default card back if all files are closed
-    }
-    setFiles(updatedFiles);
-    localStorage.setItem("files", JSON.stringify(updatedFiles));
+  const handleClose = () => {
+    localStorage.removeItem("file");
+    setFile(null); // Remove the file when the close button is clicked
   };
 
   const handleDownload = (filename) => {
-    const file = files.find((file) => file.filename === filename);
-    if (file) {
-      const element = document.createElement("a");
-      element.setAttribute(
-        "href",
-        `data:text/plain;charset=utf-8,${encodeURIComponent(
-          "Simulated file content"
-        )}`
-      );
-      element.setAttribute("download", file.filename);
+    const element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      `data:text/plain;charset=utf-8,${encodeURIComponent(
+        "Simulated file content"
+      )}`
+    );
+    element.setAttribute("download", filename);
 
-      element.style.display = "none";
-      document.body.appendChild(element);
+    element.style.display = "none";
+    document.body.appendChild(element);
 
-      element.click();
+    element.click();
 
-      document.body.removeChild(element);
-    }
+    document.body.removeChild(element);
   };
 
   return (
@@ -87,13 +79,10 @@ function Foreground() {
     >
       <label
         htmlFor="file-upload"
-        className="block w-full text-xl text-zinc-300 font-bold  cursor-pointer
-                   file:mr-4 file:py-2 file:px-4
-                   file:rounded-full file:border-0
-                   file:text-sm file:font-semibold
-                   file:bg-blue-50 file:text-blue-700
-                   hover:file:bg-blue-100
-                   mb-5"
+        className="block w-25 h-10 mx-auto text-lg text-center text-white font-bold rounded-lg cursor-pointer 
+             bg-gradient-to-r from-blue-800 via-zinc-700 to-black 
+             py-1 px-2 transition-all duration-300 transform hover:scale-105 
+             shadow-lg hover:shadow-2xl mb-5 ml-4"
       >
         Choose File
         <input
@@ -103,15 +92,15 @@ function Foreground() {
           className="hidden"
         />
       </label>
-      {files.map((item, index) => (
+
+      {file && (
         <Card
-          key={index}
-          data={item}
+          data={file}
           reference={ref}
-          onClose={() => handleClose(index)}
-          onDownload={() => handleDownload(item.filename)}
+          onClose={handleClose}
+          onDownload={() => handleDownload(file.filename)}
         />
-      ))}
+      )}
     </div>
   );
 }
