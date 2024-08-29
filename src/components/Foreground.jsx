@@ -4,27 +4,11 @@ import Card from "./Card";
 function Foreground() {
   const ref = useRef(null);
 
-  const defaultCard = {
-    filename: "profile-pic.png",
-    filesize: "N/A",
-    timestamp: "N/A",
-    desc: "This is a default card with a profile picture.",
-    close: true, // Allow the default card to be closed
-    tag: {
-      isOpen: true,
-      tagTitle: "Profile Picture",
-      tagColor: "gray",
-    },
-    imagePath: "C:\\Users\\shuda\\Downloads\\profile-pic.png", // Path to the image
-  };
-
-  const [file, setFile] = useState(defaultCard);
+  const [files, setFiles] = useState([]); // Initialize with an empty array
 
   useEffect(() => {
-    const savedFile = JSON.parse(localStorage.getItem("file"));
-    if (savedFile) {
-      setFile(savedFile);
-    }
+    const savedFiles = JSON.parse(localStorage.getItem("files")) || [];
+    setFiles(savedFiles);
   }, []);
 
   const handleFileUpload = (e) => {
@@ -44,32 +28,37 @@ function Foreground() {
         imagePath: URL.createObjectURL(uploadedFile), // Create an object URL for the uploaded file
       };
 
-      localStorage.setItem("file", JSON.stringify(newFile));
-      setFile(newFile); // Replace the existing file with the new one
+      const updatedFiles = [...files, newFile];
+      localStorage.setItem("files", JSON.stringify(updatedFiles));
+      setFiles(updatedFiles); // Update state to include the new file
     }
   };
 
-  const handleClose = () => {
-    localStorage.removeItem("file");
-    setFile(null); // Remove the file when the close button is clicked
+  const handleClose = (index) => {
+    const updatedFiles = files.filter((_, i) => i !== index);
+    localStorage.setItem("files", JSON.stringify(updatedFiles));
+    setFiles(updatedFiles); // Update state after removing a file
   };
 
   const handleDownload = (filename) => {
-    const element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      `data:text/plain;charset=utf-8,${encodeURIComponent(
-        "Simulated file content"
-      )}`
-    );
-    element.setAttribute("download", filename);
+    const file = files.find((file) => file.filename === filename);
+    if (file) {
+      const element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        `data:text/plain;charset=utf-8,${encodeURIComponent(
+          "Simulated file content"
+        )}`
+      );
+      element.setAttribute("download", file.filename);
 
-    element.style.display = "none";
-    document.body.appendChild(element);
+      element.style.display = "none";
+      document.body.appendChild(element);
 
-    element.click();
+      element.click();
 
-    document.body.removeChild(element);
+      document.body.removeChild(element);
+    }
   };
 
   return (
@@ -93,14 +82,15 @@ function Foreground() {
         />
       </label>
 
-      {file && (
+      {files.map((file, index) => (
         <Card
+          key={index}
           data={file}
           reference={ref}
-          onClose={handleClose}
+          onClose={() => handleClose(index)}
           onDownload={() => handleDownload(file.filename)}
         />
-      )}
+      ))}
     </div>
   );
 }
