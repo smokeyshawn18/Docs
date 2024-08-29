@@ -11,7 +11,7 @@ function Background() {
       </div>
 
       {/* Copyright Notice */}
-      <div className="fixed bottom-0 w-full text-center text-xl font-bold px-5 text-white py-1  bg-zinc-900">
+      <div className="fixed bottom-0 w-full text-center text-xl font-bold px-4 text-white py-1  bg-zinc-900">
         &copy; 2024 smokeyshawn. All rights reserved.
       </div>
     </>

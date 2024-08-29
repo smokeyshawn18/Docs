@@ -3,11 +3,27 @@ import Card from "./Card";
 
 function Foreground() {
   const ref = useRef(null);
-  const [files, setFiles] = useState([]);
+
+  const defaultCard = {
+    filename: "default-file.txt",
+    filesize: "0mb",
+    timestamp: "N/A",
+    desc: "This is a default card",
+    close: false, // Set to false if you don't want the default card to be closed
+    tag: {
+      isOpen: true,
+      tagTitle: "Default File",
+      tagColor: "gray",
+    },
+  };
+
+  const [files, setFiles] = useState([defaultCard]);
 
   useEffect(() => {
     const savedFiles = JSON.parse(localStorage.getItem("files")) || [];
-    setFiles(savedFiles);
+    if (savedFiles.length > 0) {
+      setFiles(savedFiles);
+    }
   }, []);
 
   const handleFileUpload = (e) => {
@@ -36,6 +52,9 @@ function Foreground() {
 
   const handleClose = (index) => {
     const updatedFiles = files.filter((_, i) => i !== index);
+    if (updatedFiles.length === 0) {
+      updatedFiles.push(defaultCard); // Add the default card back if all files are closed
+    }
     setFiles(updatedFiles);
     localStorage.setItem("files", JSON.stringify(updatedFiles));
   };

@@ -10,27 +10,35 @@ function Card({ data, reference, onClose, onDownload }) {
       drag
       dragConstraints={reference}
       whileDrag={{ scale: 1.2 }}
-      className="relative flex-shrink-0 w-60 h-72 rounded-[40px] bg-zinc-900/90 text-white py-10 px-8 overflow-hidden"
+      className="relative flex-shrink-0 w-60 h-72 rounded-[40px] bg-zinc-900/90 text-white py-10 px-8 overflow-hidden 
+                 sm:w-48 sm:h-60 sm:rounded-[30px] sm:py-6 sm:px-5"
     >
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-white bg-red-600 p-1.5 rounded-full focus:outline-none hover:bg-red-700"
+        className="absolute top-4 right-4 text-white bg-red-600 p-1.5 rounded-full focus:outline-none hover:bg-red-700 
+                   sm:top-3 sm:right-3 sm:p-1"
       >
         <IoCloseSharp size="1.5em" />
       </button>
 
-      <FaFileAlt className="text-4xl mb-4 mx-auto" />
-      <p className="text-center text-sm font-bold truncate">{data.filename}</p>
-      <p className="text-center text-sm leading-tight mt-2 font-semibold">
+      <FaFileAlt className="text-4xl mb-4 mx-auto sm:text-3xl sm:mb-3" />
+      <p className="text-center text-sm font-bold truncate sm:text-xs">
+        {data.filename}
+      </p>
+      <p className="text-center text-sm leading-tight mt-2 font-semibold sm:text-xs sm:mt-1">
         {data.desc}
       </p>
 
       <div className="footer absolute bottom-0 w-full left-0">
-        <div className="flex items-center justify-between mb-3 py-3 px-8">
-          <h5 className="text-sm">{data.filesize}</h5>
+        <div
+          className="flex items-center justify-between mb-3 py-3 px-8 
+                       sm:mb-2 sm:py-2 sm:px-5"
+        >
+          <h5 className="text-sm sm:text-xs">{data.filesize}</h5>
           <button
             onClick={onDownload}
-            className="w-9 h-9 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-500"
+            className="w-9 h-9 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-500 
+                       sm:w-7 sm:h-7"
           >
             <MdFileDownload size="1.2em" color="#000" />
           </button>
@@ -38,11 +46,16 @@ function Card({ data, reference, onClose, onDownload }) {
 
         {data.tag.isOpen && (
           <div
-            className={`tag w-full py-4 flex items-center justify-center ${
-              data.tag.tagColor === "blue" ? "bg-blue-600" : "bg-green-500"
-            }`}
+            className={`tag w-full py-4 flex items-center justify-center 
+                       sm:py-2 ${
+                         data.tag.tagColor === "blue"
+                           ? "bg-blue-600"
+                           : "bg-green-500"
+                       }`}
           >
-            <h3 className="text-base font-semibold">{data.tag.tagTitle}</h3>
+            <h3 className="text-base font-semibold sm:text-sm">
+              {data.tag.tagTitle}
+            </h3>
           </div>
         )}
       </div>
